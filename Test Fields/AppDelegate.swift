@@ -8,6 +8,22 @@
 
 import UIKit
 
+private let inputPlistName = "input"
+
+// Вместо dependecyInjection в этом проекте использовал синглтоны, чтобы не подключать библиотеки
+public var initData: InitData = {
+    var initData: InitData? = nil
+    if let inputPlistUrl = Bundle.main.url(forResource: inputPlistName, withExtension: "plist"),
+        let data = try? Data(contentsOf: inputPlistUrl) {
+        
+        let decoder = PropertyListDecoder()
+        initData = try? decoder.decode(InitData.self, from: data)
+    }
+    return initData ?? InitData(scheme: [], data: [])
+}()
+public var peopleDataManager: PeopleDataManager = PeopleDataManagerDefault(data: initData.data)
+
+// MARK: -
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
